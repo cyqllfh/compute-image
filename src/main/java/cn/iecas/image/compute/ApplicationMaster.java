@@ -702,7 +702,6 @@ public class ApplicationMaster {
   @VisibleForTesting
   class RMCallbackHandler implements AMRMClientAsync.CallbackHandler {
     @SuppressWarnings("unchecked")
-    @Override
     public void onContainersCompleted(List<ContainerStatus> completedContainers) {
       LOG.info("Got response from RM for container ask, completedCnt="
           + completedContainers.size());
@@ -800,15 +799,15 @@ public class ApplicationMaster {
       }
     }
 
-    @Override
+
     public void onShutdownRequest() {
       done = true;
     }
 
-    @Override
+
     public void onNodesUpdated(List<NodeReport> updatedNodes) {}
 
-    @Override
+
     public float getProgress() {
       // set progress to deliver to RM on next heartbeat
       float progress = (float) numCompletedContainers.get()
@@ -816,7 +815,7 @@ public class ApplicationMaster {
       return progress;
     }
 
-    @Override
+
     public void onError(Throwable e) {
       done = true;
       amRMClient.stop();
@@ -839,7 +838,7 @@ public class ApplicationMaster {
       containers.putIfAbsent(containerId, container);
     }
 
-    @Override
+
     public void onContainerStopped(ContainerId containerId) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Succeeded to stop Container " + containerId);
@@ -847,7 +846,7 @@ public class ApplicationMaster {
       containers.remove(containerId);
     }
 
-    @Override
+
     public void onContainerStatusReceived(ContainerId containerId,
         ContainerStatus containerStatus) {
       if (LOG.isDebugEnabled()) {
@@ -856,7 +855,7 @@ public class ApplicationMaster {
       }
     }
 
-    @Override
+
     public void onContainerStarted(ContainerId containerId,
         Map<String, ByteBuffer> allServiceResponse) {
       if (LOG.isDebugEnabled()) {
@@ -871,7 +870,7 @@ public class ApplicationMaster {
           applicationMaster.domainId, applicationMaster.appSubmitterUgi);
     }
 
-    @Override
+
     public void onStartContainerError(ContainerId containerId, Throwable t) {
       LOG.error("Failed to start Container " + containerId);
       containers.remove(containerId);
@@ -879,13 +878,13 @@ public class ApplicationMaster {
       applicationMaster.numFailedContainers.incrementAndGet();
     }
 
-    @Override
+
     public void onGetContainerStatusError(
         ContainerId containerId, Throwable t) {
       LOG.error("Failed to query the status of Container " + containerId);
     }
 
-    @Override
+
     public void onStopContainerError(ContainerId containerId, Throwable t) {
       LOG.error("Failed to stop Container " + containerId);
       containers.remove(containerId);
@@ -915,7 +914,7 @@ public class ApplicationMaster {
       this.shellId = shellId;
     }
 
-    @Override
+
     /**
      * Connects to CM, sets up container launch context 
      * for shell command and eventually dispatches the container 
@@ -1025,7 +1024,7 @@ public class ApplicationMaster {
   private void renameScriptFile(final Path renamedScriptPath)
       throws IOException, InterruptedException {
     appSubmitterUgi.doAs(new PrivilegedExceptionAction<Void>() {
-      @Override
+
       public Void run() throws IOException {
         FileSystem fs = renamedScriptPath.getFileSystem(conf);
         fs.rename(new Path(scriptPath), renamedScriptPath);
@@ -1090,7 +1089,7 @@ public class ApplicationMaster {
 
     try {
       ugi.doAs(new PrivilegedExceptionAction<TimelinePutResponse>() {
-        @Override
+
         public TimelinePutResponse run() throws Exception {
           return timelineClient.putEntities(entity);
         }
@@ -1119,7 +1118,7 @@ public class ApplicationMaster {
 
     try {
       ugi.doAs(new PrivilegedExceptionAction<TimelinePutResponse>() {
-        @Override
+
         public TimelinePutResponse run() throws Exception {
           return timelineClient.putEntities(entity);
         }
@@ -1146,7 +1145,7 @@ public class ApplicationMaster {
 
     try {
       ugi.doAs(new PrivilegedExceptionAction<TimelinePutResponse>() {
-        @Override
+
         public TimelinePutResponse run() throws Exception {
           return timelineClient.putEntities(entity);
         }

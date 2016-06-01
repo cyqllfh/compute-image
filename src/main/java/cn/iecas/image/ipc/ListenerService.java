@@ -4,7 +4,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.Properties;
@@ -14,31 +19,37 @@ import java.util.Properties;
  */
 public class ListenerService implements Runnable {
 
-    private static Properties props;
     private KafkaConsumer<String, String> consumer;
 
-    static {
-        props = new Properties();
-        props.put("bootstrap.servers", "slave1:9092,slave2:9092,slave3:9092");
-        props.put("group.id", "test");
-        props.put("enable.auto.commit", "true");
-        props.put("auto.commit.interval.ms", "1000");
-        props.put("session.timeout.ms", "30000");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    private void loadKafkaProperties(Properties props) {
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream("kafka.properties");
+            props.load(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
     }
 
     private PriorityBlockingQueue<Task> tasksQueue;
 
     public ListenerService(PriorityBlockingQueue<Task> tasksQueue, String topic) {
         this.tasksQueue = tasksQueue;
+        Properties props = new Properties();
+        loadKafkaProperties(props);
         consumer = new KafkaConsumer<String, String>(props);
         consumer.subscribe(Collections.singletonList("test-javaapi"));
     }
 
-    private Task parseRecord(ConsumerRecord<String, String> record) {
-        String[] taskList = record.value().split("|");
-        Task task = new Task(record.key(), taskList[0], taskList[1], taskList[2],taskList[3]);
+    private Task parseRecord(ConsumerRecord<String, String> record) throws JSONException {
+        JSONObject jsonObject = new JSONObject(record.value());
+        String op = jsonObject.getString("op");
+        String input = jsonObject.getString("input");
+        String output = jsonObject.getString("output");
+        String params = jsonObject.getString("params");
+        Task task = new Task(record.key(), op, input, output, params);
         return task;
     }
 
@@ -52,7 +63,7 @@ public class ListenerService implements Runnable {
                     Task task = parseRecord(record);
                     tasksQueue.put(task);
                 }
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
             }
         } catch(Exception e) {
             //ignore for shutdown
