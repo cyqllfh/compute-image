@@ -1,46 +1,28 @@
 package cn.iecas.image.ipc;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.errors.WakeupException;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.Properties;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 
 /**
  * Created by chu on 16-5-31.
  */
-public class ListenerService implements Runnable {
+public class TaskAccepter implements Runnable {
 
     private KafkaConsumer<String, String> consumer;
 
-    private void loadKafkaProperties(Properties props) {
-        try {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream("kafka.properties");
-            props.load(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-    }
-
     private PriorityBlockingQueue<Task> tasksQueue;
 
-    public ListenerService(PriorityBlockingQueue<Task> tasksQueue, String topic) {
+    public TaskAccepter(PriorityBlockingQueue<Task> tasksQueue, String taskTopic) {
         this.tasksQueue = tasksQueue;
-        Properties props = new Properties();
-        loadKafkaProperties(props);
-        consumer = new KafkaConsumer<String, String>(props);
-        consumer.subscribe(Collections.singletonList("test-javaapi"));
+        consumer = new KafkaConsumer<String, String>(KafkaProperties.loadKafkaProperties());
+        consumer.subscribe(Collections.singletonList(taskTopic));
     }
 
     private Task parseRecord(ConsumerRecord<String, String> record) throws JSONException {

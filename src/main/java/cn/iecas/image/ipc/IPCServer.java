@@ -6,20 +6,18 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class IPCServer {
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage IPCServer topic!");
+        if (args.length != 3) {
+            System.out.println("Usage IPCServer tasktopic acktopic!");
             System.exit(0);
         }
         PriorityBlockingQueue<Task> tasksQueue = new PriorityBlockingQueue<Task>();
-        ListenerService listenerService = new ListenerService(tasksQueue, args[0]);
-        Thread listener = new Thread(listenerService);
-        listener.start();
-        StarterService starterService = new StarterService(tasksQueue);
-        Thread starter = new Thread(starterService);
-        starter.start();
+        TaskAccepter taskAccepter = new TaskAccepter(tasksQueue, args[0]);
+        Thread accepter = new Thread(taskAccepter);
+        accepter.start();
+        TaskDealer taskDealer = new TaskDealer(tasksQueue, args[1], Integer.parseInt(args[2]));
+        taskDealer.start();
         try {
-            listener.join();
-            starter.join();
+            accepter.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

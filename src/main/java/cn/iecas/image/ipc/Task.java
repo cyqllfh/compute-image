@@ -22,6 +22,10 @@ public class Task implements Comparable<Task>{
 
     }
 
+    public String getId() {
+        return id;
+    }
+
     public int compareTo(Task task) {
         return 0;
     }

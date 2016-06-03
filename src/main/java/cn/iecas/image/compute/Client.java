@@ -197,7 +197,7 @@ public class Client {
   /**
    * @param args Command line arguments 
    */
-  public static String start(String[] args) {
+  public static int start(String[] args) {
     boolean result = false;
     try {
       Client client = new Client();
@@ -215,14 +215,14 @@ public class Client {
       result = client.run();
     } catch (Throwable t) {
       LOG.fatal("Error running Client", t);
-      return "Error running Client! ";
+      return -1;
     }
     if (result) {
       LOG.info("Application completed successfully");
-      return "Application completed successfully!";
+      return 0;
     } 
     LOG.error("Application failed to complete!");
-    return "Application failed to complete!!!";
+    return 1;
   }
 
   /**
