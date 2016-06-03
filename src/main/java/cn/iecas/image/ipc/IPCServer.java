@@ -7,7 +7,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class IPCServer {
     public static void main(String[] args) {
         if (args.length != 3) {
-            System.out.println("Usage IPCServer tasktopic acktopic!");
+            System.out.println("Usage IPCServer taskTopic ackTopic concurrentNums!");
             System.exit(0);
         }
         PriorityBlockingQueue<Task> tasksQueue = new PriorityBlockingQueue<Task>();

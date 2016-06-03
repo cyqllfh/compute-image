@@ -26,6 +26,7 @@ public class TaskSubmitter implements Runnable{
 //                "-container_memory", "350",
 //                "-master_memory", "350",
 //                "-priority", "10"};
+        System.out.println("TTTTTTTTTTTs im am in submitter!");
         String[] params = {"-jar", "target/compute-on-yarn-1.0.jar",
                 "-shell_script","/home/chu/Desktop/test.sh",
                 "-num_containers", "1",

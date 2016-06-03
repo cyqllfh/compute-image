@@ -37,6 +37,7 @@ public class TaskDealer {
         public void run() {
             Result result;
             while(true) {
+                System.out.println("AAAAAAAAAAAAAAs im am in acker!");
                 synchronized (resultQueue) {
                     if(resultQueue.isEmpty()) {
                         try {
