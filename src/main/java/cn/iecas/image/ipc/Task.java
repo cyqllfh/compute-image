@@ -26,6 +26,22 @@ public class Task implements Comparable<Task>{
         return id;
     }
 
+    public String getOp() {
+        return op;
+    }
+
+    public String getInPath() {
+        return inPath;
+    }
+
+    public String getOutPath() {
+        return outPath;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
     public int compareTo(Task task) {
         return 0;
     }

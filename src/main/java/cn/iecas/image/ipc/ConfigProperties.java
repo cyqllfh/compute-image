@@ -6,13 +6,15 @@ import java.util.Properties;
 /**
  * Created by chu on 16-6-2.
  */
-class KafkaProperties {
+class ConfigProperties {
 
-    static Properties loadKafkaProperties() {
-        Properties props = new Properties();
+    static Properties props;
+
+    static Properties loadProperties(String filename) {
+        props = new Properties();
         try {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream("kafka.properties");
+            InputStream is = classloader.getResourceAsStream(filename);
             props.load(is);
         } catch (Exception e) {
             e.printStackTrace();

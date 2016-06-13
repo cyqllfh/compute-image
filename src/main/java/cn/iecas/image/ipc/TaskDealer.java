@@ -22,7 +22,7 @@ public class TaskDealer {
 
     public TaskDealer(PriorityBlockingQueue<Task> taskQueue, String ackTopic, int taskNums) {
         this.taskQueue = taskQueue;
-        this.producer = new KafkaProducer<String, String>(KafkaProperties.loadKafkaProperties());
+        this.producer = new KafkaProducer<String, String>(ConfigProperties.loadProperties("kafka.properties"));
         this.resultQueue = new LinkedList<Result>();
         this.ackTopic = ackTopic;
         //线程池 初始化十个线程 和JDBC连接池是一个意思 实现重用

@@ -2,7 +2,7 @@ package cn.iecas.image.ipc;
 
 import java.util.Collections;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.Properties;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -21,7 +21,7 @@ public class TaskAccepter implements Runnable {
 
     public TaskAccepter(PriorityBlockingQueue<Task> tasksQueue, String taskTopic) {
         this.tasksQueue = tasksQueue;
-        consumer = new KafkaConsumer<String, String>(KafkaProperties.loadKafkaProperties());
+        consumer = new KafkaConsumer<String, String>(ConfigProperties.loadProperties("kafka.properties"));
         consumer.subscribe(Collections.singletonList(taskTopic));
     }
 
@@ -29,9 +29,12 @@ public class TaskAccepter implements Runnable {
         JSONObject jsonObject = new JSONObject(record.value());
         String op = jsonObject.getString("op");
         String input = jsonObject.getString("input");
+        String inPath = "/vsihdfs" + input.split("9000")[1];
         String output = jsonObject.getString("output");
+        String outPath = "/vsihdfs" + output.split("9000")[1];
         String params = jsonObject.getString("params");
-        Task task = new Task(record.key(), op, input, output, params);
+        Task task = new Task(record.key(), op, inPath, outPath, params);
+        System.out.println("Task" + "-" + task.getId() + ":" + task.getInPath() + ":" + task.getOutPath() + ":" + task.getParams());
         return task;
     }
 
